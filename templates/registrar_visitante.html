@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block conteudo %}
+<div class="container">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">{{ nome_pagina }}</h1>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <h4 class="mb-3 text-primary">
+                Formulário para registro de novo visitante
+            </h4>
+
+            <p class="mb-5 ml-1">
+              <small>
+                (*) Campo obrigatório
+              </small>
+            </p>
+
+            <!-- Alerta de Sucesso -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-success" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+          
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger" role="alert">
+                    <ul class="mb-0">
+                        {% for error in form.non_field_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+
+            
+            {% if form.errors %}
+                <div class="alert alert-warning" role="alert">
+                    <ul class="mb-0">
+                        {% for field in form %}
+                            {% if field.errors %}
+                                <li><strong>{{ field.label }}:</strong>
+                                    <ul>
+                                        {% for erro in field.errors %}
+                                            <li>{{ erro }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+
+            <!-- Formulário -->
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-row">
+                    {% for field in form %}
+                        {% if field.name != 'horario_saida' and field.name != 'horario_chegada' %}
+                            <div class="form-group col-md-12">
+                                <label>{{ field.label }}</label>
+                                {% if field.field.required %} * {% endif %}
+                                {% if field.name == 'data_nascimento' %}
+                                    
+                                    {% render_field field placeholder=field.label class="form-control" type="date" %}
+                                {% else %}
+                                    {% render_field field placeholder=field.label class="form-control" %}
+                                {% endif %}
+                                
+                                {% if field.errors %}
+                                    <small class="text-danger">
+                                        {% for erro in field.errors %}
+                                            {{ erro }}
+                                        {% endfor %}
+                                    </small>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+
+                <div class="form-group text-right">
+                    <button type="submit" class="btn btn-primary">Registrar Visitante</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="text-right">
+        <a href="{% url 'index' %}" class="btn btn-secondary">
+            <span class="text">Voltar</span>
+        </a>
+    </div>
+</div>
+{% endblock %}

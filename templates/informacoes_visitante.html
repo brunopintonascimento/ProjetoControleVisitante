@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% load widget_tweaks %}
+
+{% block conteudo %}
+<div class="container">
+
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">{{ nome_pagina }}</h1>
+        <a href="#" class="btn btn-success btn-icon-split btn-sm" data-toggle="modal" data-target="#modal1">
+            <span class="icon text-white-50">
+                <i class="fas fa-user-check"></i>
+            </span>
+            <span class="text">Autorizar Entrada</span>
+        </a>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <h4 class="mb-3 text-primary">Informações gerais</h4>
+
+            <form>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label>Horário de chegada</label>
+                        <input type="text" class="form-control" value="{{ visitante.horario_chegada }}" disabled>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label>Número da casa a ser visitada</label>
+                        <input type="text" class="form-control" value="{{ visitante.numero_casa }}" disabled>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label>Horário de autorização de entrada</label>
+                        <input type="text" class="form-control" value="{{ visitante.horario_autorizacao }}" disabled>
+                    </div>
+
+                    <div class="form-group col-md-4">
+                        <label>Entrada autorizada por</label>
+                        <input type="text" class="form-control" value="{{ visitante.registrado_por }}" disabled>
+                    </div>
+
+                    <div class="form-group col-md-4">
+                        <label>Horário de saída</label>
+                        <input type="text" class="form-control" value="{{ visitante.horario_saida }}" disabled>
+                    </div>
+                </div>
+            </form>
+
+            <h4 class="mb-3 mt-4 text-primary">Informações pessoais</h4>
+
+            <form>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label>Nome completo</label>
+                        <input type="text" class="form-control" value="{{ visitante.nome_completo }}" disabled>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label>CPF</label>
+                        <input type="text" class="form-control" value="{{ visitante.cpf }}" disabled>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label>Data de nascimento</label>
+                        <input type="text" class="form-control" value="{{ visitante.data_nascimento }}" disabled>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label>Placa do veículo</label>
+                        <input type="text" class="form-control" value="{{ visitante.placa_veiculo }}" disabled>
+                    </div>
+                </div>
+            </form>
+
+            <p class="text-right mt-3 mb-4">
+                <small>Visitante registrado em {{ visitante.horario_chegada }} por {{ visitante.registrado_por }}</small>
+            </p>
+
+            <div class="text-right">
+                <a href="{% url 'index' %}" class="btn btn-secondary">
+                    <span class="text">Voltar</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for authorizing visitor entry -->
+    <div class="modal fade" id="modal1" tabindex="-1" role="dialog" aria-labelledby="modal1Label" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modal1Label">Autorizar entrada de Visitante</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="{% url 'alterar_status_visitante' visitante.id %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="id_morador_responsavel" class="col-form-label">
+                                Nome do morador responsável por autorizar a entrada do visitante:
+                            </label>
+                            {% render_field form.morador_responsavel placeholder="Nome do morador responsável" class="form-control" %}
+                        </div>
+                        <input type="hidden" name="status" value="EM_VISITA">
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Autorizar entrada</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Button and form for finalizing visit -->
+    <div class="text-right mt-3">
+        <form method="POST" action="{% url 'alterar_status_visitante' visitante.id %}">
+            {% csrf_token %}
+            <input type="hidden" name="status" value="FINALIZADO">
+            <button type="submit" class="btn btn-warning btn-icon-split btn-sm">
+                <span class="text">Finalizar Visita</span>
+                <span class="icon text-white-50">
+                    <i class="fas fa-door-open"></i>
+                </span>
+            </button>
+        </form>
+    </div>
+
+</div>
+{% endblock %}

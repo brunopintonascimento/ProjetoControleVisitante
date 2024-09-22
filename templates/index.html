@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">{{ nome_pagina }}</h1>
+    </div>
+
+    <!-- Alerta de mensagens -->
+    {% if messages %}
+    <div class="alert-container">
+        {% for message in messages %}
+        <div class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %} alert-dismissible fade show"
+            role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+
+    <div class="row">
+        <!-- Card 1: Visitantes aguardando autorização -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2 bg-gradient-warning text-white">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-white text-uppercase mb-1">
+                                Visitantes aguardando autorização
+                            </div>
+                            <!-- Mostrando a quantidade de visitantes aguardando autorização -->
+                            <div class="h5 mb-0 font-weight-bold text-white visitantes-aguardando">
+                                {{ visitantes_aguardando }}
+                            </div>
+                          
+                        </div>
+                        <div class="col-auto d-flex align-items-center">
+                            <i class="bi bi-person-x fa-3x text-dark mr-2"></i>
+                            <i class="bi bi-clock fa-3x text-dark icon-rotate"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Card 2: Visitantes no condomínio -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2 bg-gradient-success text-white">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-white text-uppercase mb-1">
+                                Visitantes no condomínio
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-white">{{ visitantes_no_condominio }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-person-badge-fill fa-3x text-white"></i> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        
+
+        <!-- Card 3: Visitas finalizadas -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-danger shadow h-100 py-2 bg-gradient-danger text-white">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-white text-uppercase mb-1">
+                                Visitas Finalizadas
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-white">{{ visitas_finalizadas }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-check-circle-fill fa-3x text-white"></i> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+
+        <!-- Card 4: Visitantes registrados no mês atual -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2 bg-gradient-info text-white">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-white text-uppercase mb-1">
+                                Visitantes registrados no mês atual
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-white">{{ visitantes_registrados_mes }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-calendar-check fa-3x text-dark"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabela de visitantes -->
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Nome completo</th>
+                        <th>CPF</th>
+                        <th>Horário de chegada</th>
+                        <th>Horário da autorização</th>
+                        <th>Autorizado por</th>
+                        <th>Status</th>
+                        <th>Quantidade de visitantes</th>
+                        <th>Mais informações</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for visitante in todos_visitantes %}
+                    <tr>
+                        <td>{{ visitante.nome_completo }}</td>
+                        <td>{{ visitante.cpf }}</td>
+                        <td>{{ visitante.horario_chegada }}</td>
+                        <td>{{ visitante.horario_autorizacao|default:"Não autorizado" }}</td>
+                        <td>{{ visitante.morador_responsavel }}</td>
+                        <td>
+                            {% if visitante.status == "AGUARDANDO" %}
+                            Aguardando autorização
+                            {% elif visitante.status == "EM_VISITA" %}
+                            Em visita
+                            {% elif visitante.status == "FINALIZADO" %}
+                            Visita finalizada
+                            {% else %}
+                            Status desconhecido
+                            {% endif %}
+                        </td>
+                        <td>{{ visitante.quantidade_visitantes }}</td>
+                        <td>
+                            <a href="{% url 'informacoes_visitante' id=visitante.id %}" class="btn btn-sm btn-primary">
+                                Ver informações
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

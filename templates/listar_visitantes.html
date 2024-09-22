@@ -1,0 +1,6 @@
+<h1>Visitantes Registrados</h1>
+<ul>
+    {% for visitante in visitantes %}
+        <li>{{ visitante.nome_completo }} - Visitando: {{ visitante.morador_responsavel }}</li>
+    {% endfor %}
+</ul>

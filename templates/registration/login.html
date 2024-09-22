@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% load widget_tweaks %}
+{% load custom_filters %}
+
+{% block conteudo %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header text-center bg-primary text-white">
+                    <h2 class="text-white">Login</h2>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="{% url 'login' %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="id_username">Usuário</label>
+                            {{ form.username|add_class:"form-control" }}  <!-- Campo de usuário com classe Bootstrap -->
+                            {% if form.username.errors %}
+                                <div class="text-danger">
+                                    {{ form.username.errors.as_text }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            <label for="id_password">Senha</label>
+                            {{ form.password|add_class:"form-control" }}  <!-- Campo de senha com classe Bootstrap -->
+                            {% if form.password.errors %}
+                                <div class="text-danger">
+                                    {{ form.password.errors.as_text }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary btn-block">Entrar</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{% url 'index' %}" class="btn btn-link">Voltar para o início</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
